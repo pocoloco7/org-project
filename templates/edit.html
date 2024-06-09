@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Products</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Product Details</h1>
+        <form method="POST">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                    <tr>
+                        <td><input type="text" name="Name" value="{{ row['Name'] }}"></td>
+                        <td><input type="text" name="Description" value="{{ row['Description'] }}"></td>
+                        <td><input type="text" name="Price" value="{{ row['Price'] }}"></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <input class="btn btn-primary" type="submit" value="Save Changes">
+        </form>
+        <a class="btn btn-secondary" href="{{ url_for('home') }}">Back to Home</a>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tatwik App</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <h1>Tatwik App</h1>
+
+    <!-- View Products Section -->
+    <div>
+        <h2>View Products</h2>
+        <table>
+            {{ data | safe }}
+        </table>
+    </div>
+
+    <!-- Filtering and Sorting Section -->
+    <div>
+        <h2>Filtering and Sorting</h2>
+        <input type="search" id="search" placeholder="Search...">
+        <select id="filter-by">
+            <option value="">Filter by</option>
+            <option value="product_name">Product Name</option>
+            <option value="quantity">Quantity</option>
+        </select>
+        <select id="sort-by">
+            <option value="">Sort by</option>
+            <option value="product_name">Product Name</option>
+            <option value="quantity">Quantity</option>
+        </select>
+        <table id="data-table">
+            {{ data | safe }}
+        </table>
+    </div>
+
+    <!-- Edit Modal and Button Section -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <h2>Edit Details</h2>
+            <form action="" method="post">
+                <label for="product_name">Product Name:</label>
+                <input type="text" id="product_name" name="product_name"><br><br>
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="quantity" name="quantity"><br><br>
+                <input type="hidden" id="row_id" name="row_id">
+                <input type="submit" value="Update">
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Button Section -->
+    <table id="data-table">
+        {{ data | safe }}
+        <tr>
+            <td>{{ row.product_name }}</td>
+            <td>{{ row.quantity }}</td>
+            <td>
+                <button class="edit-btn" data-row-id="{{ loop.index0 }}">Edit</button>
+            </td>
+        </tr>
+    </table>
+
+    <!-- jQuery Library -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <!-- JavaScript for Filtering, Sorting, and Editing -->
+    <script>
+        $(document).ready(function() {
+            // Filtering
+            $('#search').on('keyup', function() {
+                var searchTerm = $(this).val().toLowerCase();
+                $('#data-table tr').each(function() {
+                    var rowText = $(this).text().toLowerCase();
+                    if (rowText.indexOf(searchTerm) === -1) {
+                        $(this).hide();
+                    } else {
+                        $(this).show();
+                    }
+                });
+            });
+
+            // Filtering by select option
+            $('#filter-by').on('change', function() {
+                var filterBy = $(this).val();
+                $('#data-table tr').each(function() {
+                    var rowText = $(this).text();
+                    if (filterBy === 'product_name') {
+                        if (rowText.indexOf($('#search').val()) === -1) {
+                            $(this).hide();
+                        } else {
+                            $(this).show();
+                        }
+                    } else if (filterBy === 'quantity') {
+                        // implement quantity filtering logic here
+                    }
+                });
+            });
+
+            // Sorting by select option
+            $('#sort-by').on('change', function() {
+                var sortBy = $(this).val();
+                $('#data-table tr').each(function() {
+                    var rowText = $(this).text();
+                    if (sortBy === 'product_name') {
+                        // implement product name sorting logic here
+                    } else if (sortBy === 'quantity') {
+                        // implement quantity sorting logic here
+                    }
+                });
+            });
+
+            // Edit button click event
+            $(".edit-btn").on("click", function() {
+                var rowId = $(this).data("row-id");
+                var productName = $(this).closest("tr").find("td:eq(0)").text();
+                var quantity = $(this).closest("tr").find("td:eq(1)").text();
+
+                // Show the edit modal
+                $("#edit-modal").modal("show");
+
+                // Populate the edit form with the current values
+                $("#product_name").val(productName);
+                $("#quantity").val(quantity);
+                $("#row_id").val(rowId);
+            });
+
+            // Form submission for editing
+            $("#edit-modal form").on("submit", function(event) {
+                event.preventDefault();
+                var formData = $(this).serialize();
+                $.ajax({
+                    type: "POST",
+                    url: "/edit",
+                    data: formData,
+                    success: function(data) {
+                        $("#edit-modal").modal("hide");
+                        location.reload();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
